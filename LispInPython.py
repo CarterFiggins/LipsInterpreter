@@ -2,6 +2,12 @@ from random import random, randint
 import os
 
 
+#**********************************
+#*********ASSIGNMENT THREE*********
+#**********************************
+
+
+
 #*************PART ONE*************
 '''
 This is the gramer for the interpeter.
@@ -11,13 +17,11 @@ BNF
 
 <operator> ::= +|-|*|/
 <digit> ::= 1|2|3|4|5|6|7|8|9
-<specialOp> ::= +|-|*
 <number> ::= <digit> | <digit> <number>
 <whitechar>::=  \t|_ (tab or empty space)
 <whiteSpace> ::= <whiteChar> | <whitechar><whitespace>
 <expresion> ::= <number> | <operator> <whiteSpace> <expresion> <whiteSpace> <expresion>
-| <specialOp> <whiteSpace> <expresion> <whiteSpace> <argument>
-<argument> ::= <expresion> | <expresion> <whitespace> <argument>
+
 
 '''
 
@@ -76,12 +80,67 @@ def prettyPrintFromTokens(tokens, depth = 0):
          print(spaces + tokens[0] + tokens[1])
          prettyPrintFromTokens(tokens[2:], depth+1)
 
-# parsing tree is 
+
+def prettyPrintParsing(expression, f, depth = 0):
+    if isinstance(expression, str):
+        if(expression.isdecimal()):        
+            f.write("%s %s" % (' ' * depth, expression) + "\n")    
+    else:        
+        f.write("%s(%s " % (' ' * depth, expression[0])+ "\n")
+        prettyPrintParsing(expression[1],f, depth+2)        
+        prettyPrintParsing(expression[2],f, depth+2)        
+        f.write("%s) " % (' ' * (depth+1))+ "\n")
+
+#**********************************
+#*********ASSIGNMENT FOUR**********
+#**********************************
+
+#*************PART ONE*************
+# Write a Parser
 
 def parsingTree(tokenList):
+    parsingList = []
+    op = ["+","-","/","*"]
+    if isinstance(tokenList, str):
+        raise Exception("ERROR Not enough Parentheses")
     token = tokenList.pop(0)
-    if( token instenceOf int):
+    if token.isdecimal():
+        return token
+    elif token in op:
+        raise Exception("ERROR Not enough Parentheses")
+    else:
+        parsingList.append(tokenList.pop(0))
+        parsingList.append(parsingTree(tokenList))
+        if tokenList[0] == ')':
+            # print("ERROR not enough Expressions")
+            raise Exception("ERROR not enough Expressions")
+        parsingList.append(parsingTree(tokenList))
+        if len(tokenList) <=0:
+            raise Exception("ERROR Not enough ending Parentheses")
 
+        test =tokenList.pop(0)
+        if test != ')':
+            # print("ERROR Too meny Expressions")
+            raise Exception("ERROR Too meny Expressions")
+    
+    return parsingList
+
+#*************PART TWO*************
+# Test With text files
+def runFiles():
+    with open("prettyPrintCorrect.txt", "w+") as printCorrect:
+        with open("correctSyntax.txt") as fileCorrect:
+            for line in fileCorrect:
+                
+                prettyPrintParsing(parsingTree(tokenize(line)),printCorrect,0)
+                printCorrect.write("*************NEW LINE**************\n")
+    with open("error.txt", "w+") as errors:
+        with open("errorSyntax.txt")as fileErrors:
+            for line in fileErrors:
+                try:
+                    prettyPrintParsing(parsingTree(tokenize(line)),errors,0)
+                except Exception as error:
+                    errors.write(str(error) + "\n")
 
 
 '''
@@ -100,7 +159,7 @@ def testingTokenize():
     tests = []
     tests.append("5") # Will Work
     tests.append("(* 73 982)") # Will Work
-    tests.append("(*(+(- 9 5)(+(/ 58 7)(* 3 2))))") # Will Work
+    tests.append("(*(+(- 9 5)(+(/ 58 7)(* 3 2)))5)") # Will Work
     tests.append("!") # Will Fail
     tests.append("(^ 5 8)") # Will Fail
     tests.append("(/(+(+ d f)5)(* 5(* 5 2)))") # Will Fail
@@ -131,47 +190,45 @@ def testingPrettyPrint():
         count +=1
         prettyPrintFromTokens(tokenize(test))
 
-print("TESTING TOKENIZE AND PRETTY PRINT")
-print("_________________________________\n")
-testingTokenize()
-testingPrettyPrint()
+
+def testingParser():
+    print("should be")
+    print("[* 73 98]")
+    print(" ------------------")
+    test=parsingTree(tokenize("(* 73 98)"))
+    print(test)
+    print("__________________")
+    print("Should Be")
+    print("( +( /( *(+ 5 2)(- 5 8) ) 2)(* 5 6))")
+    print(" ------------------")
+    print(parsingTree(tokenize("( +( /( *(+ 5 2)(- 5 8) ) 2)(* 5 6))")))
+    print("__________________")
+    print("Should Be")
+    print("(*(+ 5 2)(/ 6 8))")
+    print(" ------------------")
+    print(parsingTree(tokenize("(*(+ 5 2)(/ 6 8))")))
+    print("__________________")
+    print("Too meny expressions")
+    # need to try block to test!!!
+    print(parsingTree(tokenize("(* 5 (/ 8 9 3)")))
+    print("__________________")
+    print("not enough expressions")
+    print(parsingTree(tokenize("(* 5 (+ 5))")))
 
 
 
+#MAIN CODE
+if __name__ == '__main__':
+    # print("TESTING TOKENIZE AND PRETTY PRINT")
+    # print("_________________________________\n")
+    # testingTokenize()
+    # testingPrettyPrint()
 
+    # print("\n________________________________")
+    # print("TESTING PARSER \n")
+    # testingParser()
 
+    #runs the files
+    runFiles()
 
-
-
-
-
-
-#FROM STARTER CODE random generater
-
-# def generateRandomExpression(maxDepth = 10):
-#     # generates a string that is a legal sentence in the grammar of our simple lisp language
-#     if random() < 0.1 or maxDepth < 0:
-#         return str(randint(0, 100))
-#     else:
-#         return "(%s %s %s)" % (Operators[randint(0, 3)], 
-#                                 generateRandomExpression(maxDepth - 1), 
-#                                 generateRandomExpression(maxDepth - 1))
-                
-
-    
-# def atom(token):
-#     # changes a token to an actual integer 
-#     if token.isdigit():
-#         return int(token)
-#     return token
-    
-# print(atom('56'))
-# print(atom('('))
-# print(atom('0.344'))
-# print(atom('+'))
-
-# for _ in range(0, 10):
-#     exp = generateRandomExpression(2)
-#     print(exp)
-#     print(tokenize(exp))
 
