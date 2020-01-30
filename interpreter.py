@@ -4,9 +4,9 @@ import os
 
     
 # define all the possible operators and how many arguments they take
-Operators = ['+', '-', '*', '/', 'if', 'and', 'or', 'not', '>', 'eq' ]
+Operators = ['+', '-', '*', '/', 'if', 'and', 'or', 'not', '>', 'eq', "quote" ]
 NumberOfArguments = {}
-ArgumentCount = [(1, ['not']),(2, ['+', '-', '*', '/', 'and', 'or', 'eq']), (3, ['if'])]
+ArgumentCount = [(1, ['not', "quote"]),(2, ['+', '-', '*', '/', 'and', 'or', 'eq']), (3, ['if'])]
 # fill the mapping from operator to argument count
 for (count, operators) in ArgumentCount:
     for op in operators:
@@ -29,21 +29,21 @@ def atom(token):
         return int(token)
     return token
     
-def genGood ():
-    # Generate a set of correct random test problems
-    with open(PATH + 'correctSyntax.txt', 'w') as file:  # Use file to refer to the file object
-        for _ in range(0, 1000):
-            file.write(generateRandomExpression(1 + randint(0,10)) + "\n")
+# def genGood ():
+#     # Generate a set of correct random test problems
+#     with open(PATH + 'correctSyntax.txt', 'w') as file:  # Use file to refer to the file object
+#         for _ in range(0, 1000):
+#             file.write(generateRandomExpression(1 + randint(0,10)) + "\n")
             
-def genBad ():
-    with open(PATH + 'errorSyntax.txt', 'w') as file:  # Use file to refer to the file object
-        for _ in range(0, 1000):
-            program = generateBadRandomExpression(1 + randint(0,10)) #(1 + randint(0,10))
-            try: #try to parse the expression
-                parseTree = parse(program)
-            # Only if it does not parse then we save
-            except Exception as error:
-                file.write(program + "\n")
+# def genBad ():
+#     with open(PATH + 'errorSyntax.txt', 'w') as file:  # Use file to refer to the file object
+#         for _ in range(0, 1000):
+#             program = generateBadRandomExpression(1 + randint(0,10)) #(1 + randint(0,10))
+#             try: #try to parse the expression
+#                 parseTree = parse(program)
+#             # Only if it does not parse then we save
+#             except Exception as error:
+#                 file.write(program + "\n")
                 
 BadOps = ['_', '=','(','%']
 BadNumbers = ['1.2344','x','y']
@@ -203,11 +203,15 @@ def testEval():
         except Exception as error:
             print(error)
         print(answer)
-
+def testEvalOne():
+    parsed = quote(tokenize("(quote (/(+ 5 6)(* 5 8)))"))
+    answer = evaluate(parsed)
+    print(answer)
 
 # testingParser()
 # runFiles()
-testEval()
+# testEval()
+testEvalOne()
 
 #genGood()
 #genBad()             

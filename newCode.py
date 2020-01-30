@@ -17,8 +17,8 @@ BNF
   | <compareOp> <ws> <numberExpression> <ws> <numberExpression> | <notOP> <ws> <booleanExpression>
 <conditionalExpressions> ::= <if> <booleanExpression> <ws> <numberExpression> <ws> <numberExpression>
 '''
-ArgumentCount = [(1, ['not']),(2, ['+', '-', '*', '/', 'and', 'or', 'eq']), (3, ['if'])]
-Operators = ['+', '-', '*', '/', 'if', 'and', 'or', 'not', '>', 'eq' ]
+ArgumentCount = [(1, ['not', "quote"]),(2, ['+', '-', '*', '/', 'and', 'or', 'eq']), (3, ['if'])]
+Operators = ["quote",'+', '-', '*', '/', 'if', 'and', 'or', 'not', '>', 'eq' ]
 
 def createParseTree(tokenList):
     parsingList = []
@@ -47,6 +47,8 @@ def createParseTree(tokenList):
             raise Exception("Too meny Expressions 1.0")
     
     return parsingList
+def quote(expression):
+    return(expression)         
 
 def evaluate(parseTree):
     if isinstance(parseTree, int):
@@ -73,12 +75,16 @@ def evaluate(parseTree):
             evaluate(parseTree[3])
     if op == 'eq':
         return evaluate(parseTree[1]) == evaluate(parseTree[2])
+    if op == "quote":
+        return quote(parseTree[1])
 
 def howMenyArguments(word):
     for i in range(len(ArgumentCount)):
         if word in ArgumentCount[i][1]:
             return i+1
     return 2
+
+
 
 
 
