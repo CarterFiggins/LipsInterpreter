@@ -123,7 +123,9 @@ def tokenize(programStr):
 def legalToken(token):
     # returns True if legal for our simple lisp
     return token.isdigit() or token in Operators + [')', '(']
-            
+    
+def quote(expresion):
+    return(createParseTree(expresion))         
 
 # Do some testing
 # for _ in range(100): 
@@ -192,9 +194,20 @@ def runFiles():
                 except Exception as error:
                     errors.write("Parse error: "+ str(error) + "\n")
 
+def testEval():
+    for _ in range(1000):
+        try:
+            exp = generateRandomExpression(3)
+            parsed = quote(tokenize(exp))
+            answer = evaluate(parsed)
+        except Exception as error:
+            print(error)
+        print(answer)
+
 
 # testingParser()
-runFiles()
+# runFiles()
+testEval()
 
 #genGood()
 #genBad()             

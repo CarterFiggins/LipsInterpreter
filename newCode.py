@@ -48,7 +48,7 @@ def createParseTree(tokenList):
     
     return parsingList
 
-def eval(parseTree):
+def evaluate(parseTree):
     if isinstance(parseTree, int):
         return parseTree
     op = parseTree[0]
@@ -80,5 +80,6 @@ def howMenyArguments(word):
             return i+1
     return 2
 
-def quote(expresion)
-    return(createParseTree(expresion))
+
+
+
