@@ -107,21 +107,21 @@ def parsingTree(tokenList):
     if token.isdecimal():
         return token
     elif token in op:
-        raise Exception("ERROR Not enough Parentheses")
+        raise Exception("Not enough Parentheses")
     else:
         parsingList.append(tokenList.pop(0))
         parsingList.append(parsingTree(tokenList))
         if tokenList[0] == ')':
             # print("ERROR not enough Expressions")
-            raise Exception("ERROR not enough Expressions")
+            raise Exception("Not enough Expressions")
         parsingList.append(parsingTree(tokenList))
         if len(tokenList) <=0:
-            raise Exception("ERROR Not enough ending Parentheses")
+            raise Exception("Missing parentheses")
 
         test =tokenList.pop(0)
         if test != ')':
             # print("ERROR Too meny Expressions")
-            raise Exception("ERROR Too meny Expressions")
+            raise Exception("Expressions Missing")
     
     return parsingList
 
@@ -140,7 +140,7 @@ def runFiles():
                 try:
                     prettyPrintParsing(parsingTree(tokenize(line)),errors,0)
                 except Exception as error:
-                    errors.write(str(error) + "\n")
+                    errors.write("Parse error: "+ str(error) + "\n")
 
 
 '''
@@ -210,11 +210,13 @@ def testingParser():
     print("__________________")
     print("Too meny expressions")
     # need to try block to test!!!
-    print(parsingTree(tokenize("(* 5 (/ 8 9 3)")))
-    print("__________________")
-    print("not enough expressions")
-    print(parsingTree(tokenize("(* 5 (+ 5))")))
-
+    try:
+        print(parsingTree(tokenize("(* 5 (/ 8 9 3)")))
+        print("__________________")
+        print("not enough expressions")
+        print(parsingTree(tokenize("(* 5 (+ 5))")))
+    except Exception as error:
+                    print(str(error) + "\n")
 
 
 #MAIN CODE
@@ -226,9 +228,9 @@ if __name__ == '__main__':
 
     # print("\n________________________________")
     # print("TESTING PARSER \n")
-    # testingParser()
+    testingParser()
 
     #runs the files
-    runFiles()
+    # runFiles()
 
 
