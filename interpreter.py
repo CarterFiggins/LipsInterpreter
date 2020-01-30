@@ -204,13 +204,15 @@ def testEval():
             print(error)
         print(answer)
 def testEvalOne():
+    print("_________________")
+    print("test for quote")
     parsed = quote(tokenize("(quote (/(+ 5 6)(* 5 8)))"))
     answer = evaluate(parsed)
     print(answer)
 
 # testingParser()
 # runFiles()
-# testEval()
+testEval()
 testEvalOne()
 
 #genGood()
